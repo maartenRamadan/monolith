@@ -68,8 +68,8 @@ node_modules/
 .DS_Store
 
 # Compiled JavaScript files
-functions/lib/**/*.js
-functions/lib/**/*.js.map
+lib/**/*.js
+lib/**/*.js.map
 
 # TypeScript v1 declaration files
 typings/
