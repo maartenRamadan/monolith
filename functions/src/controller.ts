@@ -8,32 +8,26 @@ type RouteType = {
 
 type Request = {
   body: RouteType;
-  params: { routeId: string };
+  params: { id: string };
 };
 
-export const addRoute = async (req: Request, res: Response): Promise<void> => {
+export const addRoutes = async (req: Request, res: Response): Promise<void> => {
   const { location, grade } = req.body;
-  try {
-    const route = db.collection("routes").doc();
 
-    const routeObject = {
-      id: route.id,
-      location,
-      grade,
-    };
+  const route = db.collection("routes").doc();
 
-    route.set(routeObject);
+  const routeObject = {
+    location,
+    grade,
+  };
 
-    console.log("success");
+  route.set(routeObject);
 
-    res.status(200).send({
-      status: "success",
-      message: "route added successfully",
-      data: routeObject,
-    });
-  } catch (error) {
-    res.status(500).send(error);
-  }
+  res.status(200).send({
+    status: "success",
+    message: "route added successfully",
+    data: routeObject,
+  });
 };
 
 export const getAllRoutes = async (
@@ -44,39 +38,61 @@ export const getAllRoutes = async (
   const querySnapshot = await db.collection("routes").get();
   querySnapshot.forEach((doc: any) => allRoutes.push(doc.data()));
 
-  try {
-    return res.status(200).json(allRoutes);
-  } catch (error) {
-    return res.status(500).json(error.message);
-  }
+  return res.status(200).json(allRoutes);
 };
 
-export const updateRoute = async (
+export const getRoutes = async (
+  req: Request,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  const routeSnapshot = await db.collection("routes").doc(id).get();
+
+  return res.status(200).json(routeSnapshot.data());
+};
+
+export const updateRoutes = async (
   req: Request,
   res: Response
 ): Promise<unknown> => {
   const {
     body: { grade, location },
-    params: { routeId },
+    params: { id },
   } = req;
 
-  try {
-    const route = db.collection("routes").doc(routeId);
-    const currentData = (await route.get()).data() || {};
+  const routeReference = db.collection("routes").doc(id);
 
-    const routeObject = {
-      location: location || currentData.location,
-      grade: grade || currentData.grade,
-    };
+  const currentData = (await routeReference.get()).data() || {};
 
-    route.set(routeObject);
+  const routeObject = {
+    location: location || currentData.location,
+    grade: grade || currentData.grade,
+  };
 
-    return res.status(200).json({
-      status: "success",
-      message: "route updated successfully",
-      data: routeObject,
-    });
-  } catch (error) {
-    return res.status(500).json(error.message);
-  }
+  routeReference.set(routeObject);
+
+  return res.status(200).json({
+    status: "success",
+    message: "route updated successfully",
+    data: routeObject,
+  });
+};
+
+export const deleteRoutes = async (
+  req: Request,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  db.collection("routes").doc(id).delete();
+
+  return res.status(200).json({
+    status: "success",
+    message: "route deleted",
+  });
 };

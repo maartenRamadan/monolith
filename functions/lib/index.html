@@ -1,22 +1,17 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Boulder Routes</h1>
 
-        <h1>Boulder Routes</h1>
-
-        <div class="content">
-
-            <form id="add-route-form" method="post" action="/app/add-route">
-                <input type="text" name="location" placeholder="Location">
-                <input type="text" name="grade" placeholder="Route Grade">
-                <button>Add Route</button>
-            </form>
-
-            <ul id="route-list"></ul>
-
-        </div>
-        <script src="../functions/lib/index.js"></script>
-    </body>
+    <div class="content">
+      <form id="add-route-form" method="post" action="/app/add-route">
+        <input type="text" name="location" placeholder="Location" />
+        <input type="text" name="grade" placeholder="Route Grade" />
+        <button>Add Route</button>
+      </form>
+    </div>
+    <script src="../functions/lib/index.js"></script>
+  </body>
 </html>
