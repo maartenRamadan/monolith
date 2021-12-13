@@ -6,12 +6,19 @@ type RouteType = {
   grade: string;
 };
 
-type Request = {
+type RouteRequest = {
   body: RouteType;
   params: { id: string };
 };
 
-export const addRoutes = async (req: Request, res: Response): Promise<void> => {
+/**
+ * Routes
+ */
+
+export const addRoutes = async (
+  req: RouteRequest,
+  res: Response
+): Promise<void> => {
   const { location, grade } = req.body;
 
   const route = db.collection("routes").doc();
@@ -31,7 +38,7 @@ export const addRoutes = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const getAllRoutes = async (
-  req: Request,
+  req: RouteRequest,
   res: Response
 ): Promise<unknown> => {
   const allRoutes: RouteType[] = [];
@@ -42,7 +49,7 @@ export const getAllRoutes = async (
 };
 
 export const getRoutes = async (
-  req: Request,
+  req: RouteRequest,
   res: Response
 ): Promise<unknown> => {
   const {
@@ -55,7 +62,7 @@ export const getRoutes = async (
 };
 
 export const updateRoutes = async (
-  req: Request,
+  req: RouteRequest,
   res: Response
 ): Promise<unknown> => {
   const {
@@ -82,7 +89,7 @@ export const updateRoutes = async (
 };
 
 export const deleteRoutes = async (
-  req: Request,
+  req: RouteRequest,
   res: Response
 ): Promise<unknown> => {
   const {
@@ -95,4 +102,229 @@ export const deleteRoutes = async (
     status: "success",
     message: "route deleted",
   });
+};
+
+/**
+ * Climbers
+ */
+
+type ClimberType = {
+  name: string;
+  highestGrade: string;
+  medalCount: number;
+  shoeSize: number;
+};
+
+type ClimberRequest = {
+  body: ClimberType;
+  params: { id: string };
+};
+
+export const addClimbers = async (
+  req: ClimberRequest,
+  res: Response
+): Promise<void> => {
+  const { name, highestGrade, medalCount, shoeSize } = req.body;
+
+  const climber = db.collection("climbers").doc();
+
+  const climberObject = { name, highestGrade, medalCount, shoeSize };
+
+  climber.set(climberObject);
+
+  res.status(200).send({
+    status: "success",
+    message: "climber added successfully",
+    data: climberObject,
+  });
+};
+
+export const getAllClimbers = async (
+  req: ClimberRequest,
+  res: Response
+): Promise<unknown> => {
+  const allClimbers: RouteType[] = [];
+  const querySnapshot = await db.collection("climbers").get();
+  querySnapshot.forEach((doc: any) => allClimbers.push(doc.data()));
+
+  return res.status(200).json(allClimbers);
+};
+
+export const getClimbers = async (
+  req: ClimberRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  const climberSnapshot = await db.collection("climbers").doc(id).get();
+
+  return res.status(200).json(climberSnapshot.data());
+};
+
+export const updateClimbers = async (
+  req: ClimberRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    body: { name, highestGrade, medalCount, shoeSize },
+    params: { id },
+  } = req;
+
+  const climberReference = db.collection("climbers").doc(id);
+
+  const currentData = (await climberReference.get()).data() || {};
+
+  const climberObject = {
+    name: name || currentData.name,
+    highestGrade: highestGrade || currentData.highestGrade,
+    medalCount: medalCount || currentData.medalCount,
+    shoeSize: shoeSize || currentData.shoeSize,
+  };
+
+  climberReference.set(climberObject);
+
+  return res.status(200).json({
+    status: "success",
+    message: "climber updated successfully",
+    data: climberObject,
+  });
+};
+
+export const deleteClimbers = async (
+  req: ClimberRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  db.collection("climbers").doc(id).delete();
+
+  return res.status(200).json({
+    status: "success",
+    message: "climber deleted",
+  });
+};
+
+/**
+ * Climbed Routes
+ */
+
+type ClimbedRouteType = {
+  climberId: string;
+  routeId: string;
+};
+
+type ClimbedRouteRequest = {
+  body: ClimbedRouteType;
+  params: { id: string };
+};
+
+export const addClimbedRoutes = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<void> => {
+  const { climberId, routeId } = req.body;
+
+  const climbedRoutes = db.collection("climbedRoutes").doc();
+
+  const climbedRouteObject = { climberId, routeId };
+
+  climbedRoutes.set(climbedRouteObject);
+
+  res.status(200).send({
+    status: "success",
+    message: "climbed route added successfully",
+    data: climbedRouteObject,
+  });
+};
+
+export const getAllClimbedRoutes = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<unknown> => {
+  const allClimbedRoutes: RouteType[] = [];
+  const querySnapshot = await db.collection("climbedRoutes").get();
+  querySnapshot.forEach((doc: any) => allClimbedRoutes.push(doc.data()));
+
+  return res.status(200).json(allClimbedRoutes);
+};
+
+export const getClimbedRoutes = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  const climbedRouteSnapshot = await db
+    .collection("climbedRoutes")
+    .doc(id)
+    .get();
+
+  return res.status(200).json(climbedRouteSnapshot.data());
+};
+
+export const updateClimbedRoutes = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    body: { climberId, routeId },
+    params: { id },
+  } = req;
+
+  const climberReference = db.collection("climbedRoutes").doc(id);
+
+  const currentData = (await climberReference.get()).data() || {};
+
+  const climbedRouteObject = {
+    climber: climberId || currentData.climber,
+    route: routeId || currentData.route,
+  };
+
+  climberReference.set(climbedRouteObject);
+
+  return res.status(200).json({
+    status: "success",
+    message: "climbed route updated successfully",
+    data: climbedRouteObject,
+  });
+};
+
+export const deleteClimbedRoutes = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  db.collection("climbedRoutes").doc(id).delete();
+
+  return res.status(200).json({
+    status: "success",
+    message: "climbed route deleted",
+  });
+};
+
+export const getRouteClimbers = async (
+  req: ClimbedRouteRequest,
+  res: Response
+): Promise<unknown> => {
+  const {
+    params: { id },
+  } = req;
+
+  const allClimbers: RouteType[] = [];
+  const querySnapshot = await db
+    .collection("climbers")
+    .where("climbedRoutes", "==", id)
+    .get();
+  querySnapshot.forEach((doc: any) => allClimbers.push(doc.data()));
+
+  return res.status(200).json(allClimbers);
 };
