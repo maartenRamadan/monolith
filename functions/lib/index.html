@@ -3,41 +3,45 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Add Route</h1>
+    <h1>Add route</h1>
 
     <div class="content">
       <form id="add-route-form" method="post" action="/app/routes">
         <input type="text" name="location" placeholder="Location" />
         <input type="text" name="grade" placeholder="Route Grade" />
-        <button>Add Route</button>
+        <button>Add route</button>
       </form>
 
-      <h1>Add Climber</h1>
+      <h1>Add climber</h1>
       <form id="add-climber-form" method="post" action="/app/climbers">
         <input type="text" name="name" placeholder="Name" />
         <input type="text" name="highestGrade" placeholder="Highest Grade" />
         <input type="number" name="medalCount" placeholder="Medal Count" />
         <input type="number" name="shoeSize" placeholder="Shoe Size" />
-        <button>Add Climber</button>
+        <button>Add climber</button>
       </form>
 
-      <h1>Update Climbers Climbed Routes</h1>
+      <h1>Add climbed route</h1>
       <form id="add-climber-form" method="post" action="/app/climbedRoutes">
         <input type="text" name="routeId" placeholder="Route ID" />
         <input type="text" name="climberId" placeholder="Climber ID" />
-        <button>Add Climbed Route</button>
+        <button>Add climbed route</button>
       </form>
 
-      <h1>Find Route Climbers</h1>
-      <form id="find-route-climbers" method="get" action="/app/routeClimbers">
-        <input type="text" id="routeId" placeholder="Route ID" />
-        <button>Find Climbers</button>
+      <h1>Find route climbers</h1>
+      <form
+        id="find-route-climbers"
+        method="get"
+        action="/app/routeClimbers/:id"
+      >
+        <input type="text" id="id" placeholder="Route ID" />
+        <button>Get route climbers</button>
       </form>
 
-      <h1>Find Routes Climbed</h1>
-      <form id="find-route-climbers" method="get" action="/app/routeClimbers">
+      <h1>Find climbers climbed routes</h1>
+      <form id="find-route-climbers" method="get" action="/app/climberRoutes">
         <input type="text" id="climberId" placeholder="Climber ID" />
-        <button>Find Climbers</button>
+        <button>Get climbed routes</button>
       </form>
     </div>
     <script src="../functions/lib/index.js"></script>

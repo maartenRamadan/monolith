@@ -209,7 +209,7 @@ export const deleteClimbers = async (
 };
 
 /**
- * Climbed Routes
+ * Climbed routes
  */
 
 type ClimbedRouteType = {
@@ -260,12 +260,23 @@ export const getClimbedRoutes = async (
     params: { id },
   } = req;
 
-  const climbedRouteSnapshot = await db
+  const climbedRoutesSnapshot = await db
     .collection("climbedRoutes")
-    .doc(id)
+    .where("climberId", "==", id)
     .get();
 
-  return res.status(200).json(climbedRouteSnapshot.data());
+  const climbedRoutes: RouteType[] = [];
+
+  for await (const climbedRoute of climbedRoutesSnapshot.docs) {
+    const routeSnapshot = await db
+      .collection("routes")
+      .doc(climbedRoute.data().routeId)
+      .get();
+
+    climbedRoutes.push(routeSnapshot.data() as RouteType);
+  }
+
+  return res.status(200).json(climbedRoutes);
 };
 
 export const updateClimbedRoutes = async (
@@ -311,6 +322,10 @@ export const deleteClimbedRoutes = async (
   });
 };
 
+/**
+ * Route climbers
+ */
+
 export const getRouteClimbers = async (
   req: ClimbedRouteRequest,
   res: Response
@@ -319,12 +334,21 @@ export const getRouteClimbers = async (
     params: { id },
   } = req;
 
-  const allClimbers: RouteType[] = [];
-  const querySnapshot = await db
-    .collection("climbers")
-    .where("climbedRoutes", "==", id)
+  const climbedRoutesSnapshot = await db
+    .collection("climbedRoutes")
+    .where("routeId", "==", id)
     .get();
-  querySnapshot.forEach((doc: any) => allClimbers.push(doc.data()));
 
-  return res.status(200).json(allClimbers);
+  const routeClimbers: ClimberType[] = [];
+
+  for await (const climbedRoute of climbedRoutesSnapshot.docs) {
+    const climberSnapshot = await db
+      .collection("climbers")
+      .doc(climbedRoute.data().climberId)
+      .get();
+
+    routeClimbers.push(climberSnapshot.data() as ClimberType);
+  }
+
+  return res.status(200).json(routeClimbers);
 };
